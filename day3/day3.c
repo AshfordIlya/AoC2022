@@ -80,13 +80,40 @@ unsigned int sum_priorities_part2(char *input, int size) {
   return total_priority;
 }
 
+unsigned int sum_priorities_part2_better(char *input, int size) {
+  unsigned int total_priority = 0;
+  char *end = input + size;
+  while (input != end) {
+    unsigned long alphabets[3] = {0};
+    for (int i = 0; i < 3; i++) {
+      while (*input != '\n') {
+        alphabets[i] |= 1UL << (*input - 'A');
+        input++;
+      }
+      input++;
+    }
+    unsigned long bitwise_and = (alphabets[0] & alphabets[1]);
+    bitwise_and &= alphabets[2];
+    unsigned int index = 0;
+    while (bitwise_and != 1) {
+      bitwise_and >>= 1;
+      index++;
+    }
+    if (index >= LOWER_ALPHABET_START)
+      total_priority += index - LOWERCASE_PRIORITY_OFFSET;
+    else
+      total_priority += index + UPPERCASE_PRIORITY_OFFSET;
+  }
+  return total_priority;
+}
+
 int main(void) {
   int file = open("input.txt", O_RDONLY);
   int size = (int)lseek(file, 0, SEEK_END);
   char *input = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, file, 0);
   close(file);
-  printf("%d\n", sum_priorities(input, size));
+  printf("part 1 = %d\n", sum_priorities(input, size));
   printf("part 2 = %d\n", sum_priorities_part2(input, size));
-
+  printf("part 2 better = %d\n", sum_priorities_part2_better(input, size));
   return 0;
 }
