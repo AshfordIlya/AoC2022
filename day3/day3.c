@@ -45,42 +45,7 @@ unsigned int sum_priorities(char *input, int size) {
   return total_priority;
 }
 
-/*using less names this time*/
 unsigned int sum_priorities_part2(char *input, int size) {
-  unsigned int total_priority = 0;
-  char *end = input + size;
-  unsigned long alphabets[3] = {0};
-  while (input != end) {
-    for (int i = 0; i < 3; i++) {
-      while (*input != '\n') {
-        alphabets[i] |= 1UL << (*input - 'A');
-        input++;
-      }
-      input++;
-    }
-    for (int i = 0; i < BITFIELD_SIZE; i++) {
-      unsigned int exists_sum = ((alphabets[0] >> i) & 1U) +
-                                ((alphabets[1] >> i) & 1U) +
-                                ((alphabets[2] >> i) & 1U);
-      switch (exists_sum) {
-      case 3:
-        if (i >= LOWER_ALPHABET_START)
-          total_priority += i - LOWERCASE_PRIORITY_OFFSET;
-        else
-          total_priority += i + UPPERCASE_PRIORITY_OFFSET;
-        goto end;
-      default:
-        continue;
-      }
-    }
-  end:
-    for (int i = 0; i < 3; i++)
-      alphabets[i] &= 0U;
-  }
-  return total_priority;
-}
-
-unsigned int sum_priorities_part2_better(char *input, int size) {
   unsigned int total_priority = 0;
   char *end = input + size;
   while (input != end) {
@@ -114,6 +79,5 @@ int main(void) {
   close(file);
   printf("part 1 = %d\n", sum_priorities(input, size));
   printf("part 2 = %d\n", sum_priorities_part2(input, size));
-  printf("part 2 better = %d\n", sum_priorities_part2_better(input, size));
   return 0;
 }
